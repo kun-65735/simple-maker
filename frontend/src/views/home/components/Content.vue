@@ -36,7 +36,7 @@
   initRankingRows()
   // test
   /* rankingRows.value[0].items.push({ path: defaultImgList[0] })
-  rankingRows.value[0].items.push({ path: defaultImgList[1] }) */
+rankingRows.value[0].items.push({ path: defaultImgList[1] }) */
 
   function initRankingRows() {
     for (let i = 0; i < 4; i++) {
@@ -61,14 +61,17 @@
     })
   }
 
-  const emits = defineEmits(['handleDelRow'])
+  const emits = defineEmits(['handleDelRow', 'dbRemoveClick'])
 
   const handleDelRow = (index: number) => {
     console.log(rankingRows.value[index])
     emits('handleDelRow', rankingRows.value[index])
     rankingRows.value.splice(index, 1)
   }
-
+  const dbRemoveClick = (img: RankingItem, index: number, imgIndex: number) => {
+    rankingRows.value[index].items.splice(imgIndex, 1)
+    emits('dbRemoveClick', img)
+  }
   const hexToRgba = (hex: string, alpha = 0.2) => {
     hex = hex.replace('#', '')
     const r = parseInt(hex.substring(0, 2), 16)
@@ -111,8 +114,15 @@
             group="img-row"
             itemKey="path"
           >
-            <template #item="{ element: img }">
-              <n-image :src="img.path" preview-disabled width="80" class="img-item"> </n-image>
+            <template #item="{ element: img, index: imgIndex }">
+              <n-image
+                :src="img.path"
+                preview-disabled
+                width="80"
+                class="img-item"
+                @dblclick="dbRemoveClick(img, index, imgIndex)"
+              >
+              </n-image>
             </template>
           </draggable>
           <!--?action-->
@@ -140,11 +150,13 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 16px;
     box-sizing: border-box;
+
     //transition: all 0.3s ease;
     .rank-row {
       display: flex;
       align-items: center;
       margin-bottom: 10px;
+
       .level-item {
         flex-shrink: 0;
         height: 100px;
@@ -155,9 +167,8 @@
         color: white;
         border-radius: 8px;
         margin-right: 8px;
-        .level-name {
-        }
       }
+
       .img-row {
         background-color: #fafafa;
         min-height: 100px;
@@ -170,6 +181,7 @@
         flex-wrap: wrap;
         gap: 8px;
         border: 2px dashed #e8e8e8;
+
         // transition: all 0.3s ease;
         .img-item {
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -180,30 +192,36 @@
           background: white;
           height: 80px;
           width: 80px;
+
           &:hover {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
           }
         }
       }
+
       .action-item {
         height: 80px;
         padding: 0 10px;
         @include vertical-center;
         flex-direction: column;
         transition: all 0.3s ease;
+
         i {
           font-size: 20px;
           cursor: pointer;
+
           &:hover {
             color: #5386ed;
           }
         }
+
         i:last-child {
           font-size: 24px;
           margin-top: 6px;
         }
       }
     }
+
     .add-action {
       width: 100%;
       height: 30px;
@@ -211,11 +229,13 @@
       border-radius: 4px;
       @include vertical-center;
       transition: all 0.3s ease;
+
       &:hover {
         color: #5386ed;
         border: 2px dashed #5386ed;
         cursor: pointer;
       }
+
       i {
         font-size: 20px;
         cursor: pointer;

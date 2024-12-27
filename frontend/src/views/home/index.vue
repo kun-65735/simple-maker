@@ -3,7 +3,7 @@
   import ChooseImages from '@/views/home/components/ChooseImages.vue'
   import Content from '@/views/home/components/Content.vue'
   import Header from '@/views/home/components/Header.vue'
-  import { RankingItem } from '@/views/home/types'
+  import { RankingItem, ImgItem } from '@/views/home/types'
   import { useHomeStore } from '@/store/home'
   // @ts-ignore
   import domtoimage from 'dom-to-image'
@@ -15,7 +15,10 @@
   const handleDelRow = (row: RankingItem) => {
     chooseImagesRef.value.addImages(row.items)
   }
-
+  const dbDelCard = (img: ImgItem) => {
+    chooseImagesRef.value.addImages([{ ...img }])
+    // row.items.splice(index, 1)
+  }
   // ? 模拟一个下面的占位box
   const pinImgsBoxHeight = ref(0)
   const handleImageBoxHeightChange = (height: number, isPin: boolean) => {
@@ -54,7 +57,7 @@
       <div ref="previewBoxRef" class="preview-box">
         <Title ref="titleRef"></Title>
         <div class="container">
-          <content @handle-del-row="handleDelRow"></content>
+          <content @handle-del-row="handleDelRow" @db-remove-click="dbDelCard"></content>
           <choose-images
             v-show="homeStore.modeType === 'edit'"
             ref="chooseImagesRef"
@@ -80,6 +83,7 @@
     padding: 0 20px 20px 20px;
     overflow-y: auto;
     position: relative;
+
     //border: solid 1px red;
     .container {
       // border: dashed 1px black;
@@ -90,9 +94,6 @@
       background-color: #f5f5f5;
       padding: 10px;
       overflow-y: auto;
-    }
-    .pin-box {
-      // border: solid 1px red;
     }
   }
 </style>
